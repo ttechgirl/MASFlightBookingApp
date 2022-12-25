@@ -10,10 +10,10 @@ namespace MASFlightBookingApp.Controllers
     public class MASFlightBookingController : Controller
     {
         private IFlightRepository flightRepository;
-        public MASFlightBookingController()
+        public MASFlightBookingController(IFlightRepository flightRepository)
         {
-            //initialization
-            flightRepository = new FlightRepository(new MASFlightDBContext());
+            this.flightRepository = flightRepository;
+
         }
         public IActionResult Index()
         {
@@ -83,7 +83,7 @@ namespace MASFlightBookingApp.Controllers
                 ViewBag.ErrorMessage = "Unable to save changes.Try again";
 
             }
-            CheckFlights flights = flightRepository.CheckFlightDetails(BookingId);
+           // CheckFlights flights = flightRepository.CheckFlightDetails(BookingId);
             return View(flights);
         }
         [HttpPost,ActionName("Delete")]
@@ -95,8 +95,13 @@ namespace MASFlightBookingApp.Controllers
                 flightRepository.RevokeFlights(BookingId);
                 flightRepository.Save();
             }
+
         }
 
+        /*public IActionResult Index()
+        {
+            return View();
+        } 
         public IActionResult WelcomeNote()
         {
             return View();
@@ -110,7 +115,7 @@ namespace MASFlightBookingApp.Controllers
         public IActionResult Login()
         {
             return View();
-        }
+        }*/
 
 
 
