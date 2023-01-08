@@ -17,19 +17,28 @@ namespace MASFlightBookingApp.Repositories
             this.configuration = configuration;
         }
 
-        public IEnumerable<GetFlights> GetAllFlights()
+        public  async Task<GetFlights> GetAllFlights(string path)
         {
+            GetFlights availableFlights = null;
+            var url = $"{configuration.GetValue<string>("API:url")}/Get_Available_Flights";
 
-            throw new System.NotImplementedException();
+            var client = new HttpClient();
+            var response = await client.GetAsync(path);
+            var data = JsonConvert.SerializeObject(path);
 
+            if (response.IsSuccessStatusCode)
+            {
+                availableFlights = await response.Content.ReadAsStringAsync<GetFlights>();
+            }
 
+            return availableFlights;
         }
         public async Task<BuyFlightsResponse> BuyFlightTickets(BuyFlightsRequest requests)
         {
 
              BuyFlightsResponse deserialize;
 
-            var url = $"{configuration.GetValue<string>("API:url")}/";
+            var url = $"{configuration.GetValue<string>("API:url")}/Buy_Flight_Ticket";
 
             var client = new HttpClient();
             //client.BaseAddress = new Uri();
@@ -51,7 +60,7 @@ namespace MASFlightBookingApp.Repositories
         {
             CheckFlights deserialize;
 
-            var url = $"{configuration.GetValue<string>("API:url")}/";
+            var url = $"{configuration.GetValue<string>("API:url")}/Check_Flight_Details";
             var client = new HttpClient();
 
             var sendRequest = await client.GetAsync(url);
@@ -64,15 +73,24 @@ namespace MASFlightBookingApp.Repositories
 
         }
 
-        public Task<UpdateFlights> UpdateFlightDetails(UpdateFlights requests)
+        public async Task<UpdateFlights> UpdateFlightDetails(UpdateFlights requests)
         {
-            throw new System.NotImplementedException();
+            UpdateFlights deserialize;
+            var url = $"{configuration.GetValue<string>("API:url")}/Update_Flight_Details";
+
+            var client = new HttpClient();
+
+            var data = JsonConvert.SerializeObject(requests);
+            var sendRequest = await client.PutAsync(url, new  StringContent(data, Encoding.UTF8,"application/json"));
+            var response = await sendRequest.Content.ReadAsStringAsync();
+
+            deserialize = JsonConvert.DeserializeObject<UpdateFlights>(response);
+
+            return deserialize;
+
         }
 
-        public void Dispose()
-        {
-                  throw new System.NotImplementedException();
-        }
+      
 
         public Task<DeleteFlights> RevokeFlights(long BookingId)
         {
@@ -85,9 +103,12 @@ namespace MASFlightBookingApp.Repositories
         {
         }
 
-              
+       
 
-
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

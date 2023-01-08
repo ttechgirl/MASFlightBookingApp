@@ -7,7 +7,7 @@ namespace MASFlightBookingApp.Repositories
 {
     public interface IFlightRepository: IDisposable
     {
-        IEnumerable<GetFlights> GetAllFlights();
+        Task<GetFlights> GetAllFlights(string path);
         Task<BuyFlightsResponse> BuyFlightTickets(BuyFlightsRequest requests);
         Task<CheckFlights> CheckFlightDetails(long BookingId);
         Task<UpdateFlights> UpdateFlightDetails(UpdateFlights requests);
